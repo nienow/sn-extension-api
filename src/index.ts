@@ -16,8 +16,8 @@ class StandardNotesExtensionAPI {
   private coallesedSavingDelay;
   private messageHandler?: (event: any) => void;
   private onThemesChangeCallback?: () => void;
-  private generatePreview: () => string;
   private subscriptions = [];
+  private generateNotePreview: boolean = true;
 
   public initialize(options: SnMediatorOptions) {
     if (this.contentWindow) {
@@ -65,10 +65,12 @@ class StandardNotesExtensionAPI {
   };
 
   public get text(): string {
+    this.checkNoteExists();
     return this.lastStreamedItem?.content?.text || '';
   }
 
   public get meta(): any {
+    this.checkNoteExists();
     if (this.lastStreamedItem?.content) {
       return this.lastStreamedItem.content.appData[this.lastStreamedItem.content.editorIdentifier];
     }
@@ -76,32 +78,29 @@ class StandardNotesExtensionAPI {
   }
 
   public get locked(): boolean {
+    this.checkNoteExists();
     return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['locked'];
   }
 
-  public get archived(): boolean {
-    return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['archived'];
+  public get preview(): string {
+    this.checkNoteExists();
+    return this.lastStreamedItem?.content?.preview_plain;
   }
 
-  public get pinned(): boolean {
-    return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['pinned'];
-  }
-
-  public get trashed(): boolean {
-    return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['trashed'];
-  }
-
-  public get starred(): boolean {
-    return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['starred'];
-  }
-
-  public updateNote(newText: string, generatePreview?: () => string) {
+  public set text(newText: string) {
+    this.checkNoteExists();
     this.lastStreamedItem.content.text = newText;
-    this.generatePreview = generatePreview || this.generatePreview;
     this.saveNote(this.lastStreamedItem);
   };
 
-  public updateMeta(newMeta: any) {
+  public set preview(newPreview: string) {
+    this.checkNoteExists();
+    this.generateNotePreview = false;
+    this.lastStreamedItem.content.preview_plain = newPreview;
+  }
+
+  public set meta(newMeta: any) {
+    this.checkNoteExists();
     this.lastStreamedItem.content.appData[this.lastStreamedItem.content.editorIdentifier] = newMeta;
     this.saveNote(this.lastStreamedItem);
   };
@@ -202,60 +201,17 @@ class StandardNotesExtensionAPI {
     this.postMessage(ComponentAction.ThemesActivated, {});
   }
 
-  public isRunningInDesktopApplication(): boolean {
+  public get isRunningInDesktopApplication(): boolean {
     return this.component.environment === 'desktop';
   }
 
-  public isRunningInMobileApplication(): boolean {
+  public get isRunningInMobileApplication(): boolean {
     return this.component.environment === 'native-mobile-web';
   }
 
-  public isRunningInBrowser(): boolean {
+  public get isRunningInBrowser(): boolean {
     return this.component.environment === 'web';
   }
-
-  /**
-   * Gets the component's data value for the specified key.
-   * @param key The key for the data object.
-   * @returns `undefined` if the value for the key does not exist. Returns the stored value otherwise.
-   */
-  // public getComponentDataValueForKey(key: string): any {
-  //   if (!this.component.data) {
-  //     return;
-  //   }
-  //   return this.component.data[key];
-  // }
-
-  /**
-   * Sets the component's data value for the specified key.
-   * @param key The key for the data object.
-   * @param value The value to store under the specified key.
-   */
-  // public setComponentDataValueForKey(key: string, value: any): void {
-  //   if (!this.component.data) {
-  //     throw new Error('The component has not been initialized.');
-  //   }
-  //   if (!key || (key && key.length === 0)) {
-  //     throw new Error('The key for the data value should be a valid string.');
-  //   }
-  //   this.component.data = {
-  //     ...this.component.data,
-  //     [key]: value,
-  //   };
-  //   this.postMessage(ComponentAction.SetComponentData, {
-  //     componentData: this.component.data,
-  //   });
-  // }
-
-  /**
-   * Clears the component's data object.
-   */
-  // public clearComponentData(): void {
-  //   this.component.data = {};
-  //   this.postMessage(ComponentAction.SetComponentData, {
-  //     componentData: this.component.data,
-  //   });
-  // }
 
   private postMessage(
     action: ComponentAction,
@@ -291,7 +247,7 @@ class StandardNotesExtensionAPI {
     let postMessagePayload;
 
     // Mobile (React Native) requires a string for the postMessage API.
-    if (this.isRunningInMobileApplication()) {
+    if (this.isRunningInMobileApplication) {
       postMessagePayload = JSON.stringify(message);
     } else {
       postMessagePayload = message;
@@ -380,16 +336,10 @@ class StandardNotesExtensionAPI {
     return crypto.randomUUID();
   }
 
-  /**
-   * Gets the current platform where the component is running.
-   */
   public get platform(): string | undefined {
     return this.component.platform;
   }
 
-  /**
-   * Gets the current environment where the component is running.
-   */
   public get environment(): string | undefined {
     return this.component.environment;
   }
@@ -398,7 +348,9 @@ class StandardNotesExtensionAPI {
     items: NoteContainer[]
     callback?: () => void
   }) {
-    items[0].content.preview_plain = this.generatePreview ? this.generatePreview() : getPreviewText(items[0].content.text);
+    if (this.generateNotePreview) {
+      items[0].content.preview_plain = getPreviewText(items[0].content.text);
+    }
 
     const mappedItems = [];
     for (const item of items) {
@@ -414,14 +366,6 @@ class StandardNotesExtensionAPI {
     );
   }
 
-  /**
-   * Saves a collection of existing Items.
-   * @param item The items to be saved.
-   * @param callback
-   * @param skipDebouncer Allows saves to go through right away rather than waiting for timeout.
-   * This should be used when saving items via other means besides keystrokes.
-   * @param presave
-   */
   private saveNote(
     item: NoteContainer,
     callback?: () => void,
@@ -465,6 +409,12 @@ class StandardNotesExtensionAPI {
     copy.children = null;
     copy.parent = null;
     return copy;
+  }
+
+  private checkNoteExists() {
+    if (!this.lastStreamedItem) {
+      throw 'Trying to interact with note before it is received from Standard Notes. Use subscribe function.';
+    }
   }
 }
 
