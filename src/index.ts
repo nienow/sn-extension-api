@@ -19,11 +19,10 @@ class StandardNotesExtensionAPI {
   private subscriptions = [];
   private generateNotePreview: boolean = true;
 
-  public initialize(options: SnMediatorOptions) {
+  public initialize(options: SnMediatorOptions = {}) {
     if (this.contentWindow) {
       throw 'Cannot initialize mediator more than once';
     }
-    options = options || {};
     this.contentWindow = window;
     this.coallesedSavingDelay = typeof options.debounceSave !== 'undefined' ? options.debounceSave : DEFAULT_COALLESED_SAVING_DELAY;
     this.registerMessageHandler();
@@ -418,5 +417,5 @@ class StandardNotesExtensionAPI {
   }
 }
 
-const snApi = new StandardNotesExtensionAPI();
+export const snApi = new StandardNotesExtensionAPI();
 export default snApi;

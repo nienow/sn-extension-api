@@ -1,10 +1,9 @@
 const CopyPlugin = require("copy-webpack-plugin");
-const NpmDtsPlugin = require('npm-dts-webpack-plugin')
 
 module.exports = (env, argv) => ({
   mode: 'production',
   entry: {
-    snExtApi: 'index.ts'
+    index: 'index.ts'
   },
   output: {
     filename: "[name].js",
@@ -15,18 +14,9 @@ module.exports = (env, argv) => ({
   module: {
     rules: [
       {
-        test: /\.(ts|tsx|js|jsx)$/,
+        test: /\.(ts)$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      {
-        test: /\.css$/i,
-        use: [
-          "style-loader",
-          "css-loader"
-        ],
+        use: ["ts-loader"]
       }
     ]
   },
@@ -41,9 +31,6 @@ module.exports = (env, argv) => ({
     minimize: true
   },
   plugins: [
-    new NpmDtsPlugin({
-      output: 'dist/snExtApi.d.ts'
-    }),
     new CopyPlugin({
       patterns: [
         {

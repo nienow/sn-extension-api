@@ -83,7 +83,7 @@ snApi.preview = 'my note preview';
 
 ### Custom Note Metadata
 
-You can store metadata separately from the note text:
+You can store metadata separately from the note text. This data can be any object (it does not need to be a string like the text).
 
 ```javascript
 // get metadata
