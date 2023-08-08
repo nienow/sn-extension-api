@@ -6,7 +6,7 @@
     "url": "https://github.com/nienow/sn-extension-api/issues"
   },
   "homepage": "https://github.com/nienow/sn-extension-api",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

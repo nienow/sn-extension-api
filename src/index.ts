@@ -124,20 +124,6 @@ class StandardNotesExtensionAPI {
         return;
       }
 
-      /**
-       * The Component Registered message will be the most reliable one, so we won't change it after any subsequent events,
-       * in case you receive an event from another window.
-       */
-      if (
-        typeof this.component.origin === 'undefined' &&
-        parsedData.action === ComponentAction.ComponentRegistered
-      ) {
-        this.component.origin = event.origin;
-      } else if (event.origin !== this.component.origin) {
-        // If event origin doesn't match first-run value, return.
-        return;
-      }
-
       this.handleMessage(parsedData);
     };
 
@@ -254,8 +240,7 @@ class StandardNotesExtensionAPI {
 
     // Logger.info('Posting message:', postMessagePayload);
     this.contentWindow.parent.postMessage(
-      postMessagePayload,
-      this.component.origin!,
+      postMessagePayload, '*'
     );
   }
 
