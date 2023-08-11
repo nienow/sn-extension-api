@@ -9,6 +9,7 @@ export enum ComponentAction {
   ComponentRegistered = 'component-registered',
   ActivateThemes = 'themes',
   ThemesActivated = 'themes-activated',
+  SetComponentData = 'set-component-data',
 }
 
 export type Component = {

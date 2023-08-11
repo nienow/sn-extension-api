@@ -76,6 +76,10 @@ class StandardNotesExtensionAPI {
     return {};
   }
 
+  public get extensionMeta(): any {
+    return this.component.data;
+  }
+
   public get locked(): boolean {
     this.checkNoteExists();
     return this.lastStreamedItem?.content?.appData[SN_DOMAIN]['locked'];
@@ -103,6 +107,13 @@ class StandardNotesExtensionAPI {
     this.lastStreamedItem.content.appData[this.lastStreamedItem.content.editorIdentifier] = newMeta;
     this.saveNote(this.lastStreamedItem);
   };
+
+  public set extensionMeta(data: any) {
+    this.component.data = data;
+    this.postMessage(ComponentAction.SetComponentData, {
+      componentData: data
+    });
+  }
 
   private registerMessageHandler() {
     this.messageHandler = (event: MessageEvent) => {

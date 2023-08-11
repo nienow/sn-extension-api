@@ -81,7 +81,7 @@ snApi.text = JSON.stringify({...});
 snApi.preview = 'my note preview';
 ```
 
-### Custom Note Metadata
+### Note Metadata
 
 You can store metadata separately from the note text. This data can be any object (it does not need to be a string like the text).
 
@@ -91,6 +91,18 @@ console.log(snApi.meta);
 
 // set metadata
 snApi.meta = {lastCursorPosition: 123, selectedLines: [1, 3]};
+```
+
+### Extension Metadata
+
+This data is stored per extension (not per note). It can be any object.
+
+```javascript
+// get extension metadata
+console.log(snApi.extensionMeta);
+
+// set extension metadata
+snApi.extensionMeta = {spacingPreference: 'comfortable'};
 ```
 
 ### Environment
