@@ -131,7 +131,6 @@ class StandardNotesExtensionAPI {
       const parsedData = isValidJsonString(data) ? JSON.parse(data) : data;
 
       if (!parsedData) {
-        // Logger.error('Invalid data received. Skipping...');
         return;
       }
 
