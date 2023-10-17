@@ -201,7 +201,7 @@ class StandardNotesExtensionAPI {
   }
 
   public get isRunningInMobileApplication(): boolean {
-    return this.component.environment === 'native-mobile-web';
+    return this.component.environment === 'mobile';
   }
 
   public get isRunningInBrowser(): boolean {
