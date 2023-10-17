@@ -293,9 +293,13 @@ class StandardNotesExtensionAPI {
         continue;
       }
 
+      const actualThemeUrl = themeUrl.endsWith('/org.standardnotes.theme-focus/index.css') ?
+        'https://app.standardnotes.com/components/assets/org.standardnotes.theme-focus/index.css' :
+        themeUrl;
+
       const link = this.contentWindow.document.createElement('link');
       link.id = btoa(themeUrl);
-      link.href = themeUrl;
+      link.href = actualThemeUrl;
       link.type = 'text/css';
       link.rel = 'stylesheet';
       link.media = 'screen,print';
