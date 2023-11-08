@@ -11,7 +11,7 @@ class StandardNotesExtensionAPI {
   private messageQueue: MessagePayload[] = [];
   private lastStreamedItem?: NoteContainer;
   private pendingSaveItems?: NoteContainer[];
-  private pendingSaveTimeout?: NodeJS.Timeout;
+  private pendingSaveTimeout?: number;
   private pendingSaveParams?: any;
   private coallesedSavingDelay;
   private messageHandler?: (event: any) => void;
