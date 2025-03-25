@@ -25,12 +25,13 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^12.0.2",
-    "ts-loader": "^9.5.1",
+    "copy-webpack-plugin": "^13.0.0",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
+    "typescript": "^5.8.2",
     "url-loader": "^4.1.1",
-    "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4"
-  }
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  },
+  "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"
 }
