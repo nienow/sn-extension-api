@@ -117,14 +117,6 @@ class StandardNotesExtensionAPI {
 
   private registerMessageHandler() {
     this.messageHandler = (event: MessageEvent) => {
-      if (document.referrer) {
-        const referrer = new URL(document.referrer).origin;
-        const eventOrigin = new URL(event.origin).origin;
-
-        if (referrer !== eventOrigin) {
-          return;
-        }
-      }
 
       // Mobile environment sends data as JSON string.
       const {data} = event;
